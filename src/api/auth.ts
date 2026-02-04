@@ -5,5 +5,12 @@ export const login = async (username: string, password: string) => {
         username,
         password,
     });
+
+    localStorage.setItem("token", res.data.token);
+
     return res.data.token;
+};
+
+export const logout = () => {
+    localStorage.removeItem("token");
 };

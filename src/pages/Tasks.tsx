@@ -1,10 +1,13 @@
+import Navbar from "../components/Navbar";
+
 const Tasks = () => {
     return (
         <>
-        <div>
-            <h2>Tasks Page</h2>
+            <Navbar />
+            <div>
+                <h2>Tasks Page</h2>
 
-        </div>
+            </div>
         </>
     )
 }

@@ -1,6 +1,6 @@
 import {useState} from "react";
 import {login} from "../api/auth.ts";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 
 
 const Login = () => {
@@ -13,8 +13,7 @@ const Login = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const token = await login(username, password);
-            localStorage.setItem("token", token);
+            await login(username, password);
             navigate("/tasks");
         } catch {
             setError("Invalid credentials");
@@ -23,28 +22,51 @@ const Login = () => {
 
     return (
         <>
-            <form onSubmit={handleSubmit}>
-                <h2>Login</h2>
+            <div className="min-h-screen flex items-center justify-center bg-blue-500">
 
-                <input
-                    placeholder="Username"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                />
+                <form
+                    onSubmit={handleSubmit}
+                    className="bg-white p-8 rounded-lg shadow-md w-[350px] space-y-4"
+                >
 
-                <input
-                    type="password"
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                />
+                    <h2 className="text-2xl font-bold text-center">
+                        Task Tracker
+                    </h2>
 
-                <button type="submit">Login</button>
+                    <input
+                        type="text"
+                        placeholder="Username"
+                        className="w-full border p-2 rounded"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                    />
 
-                {error && <p>{error}</p>}
-            </form>
-        </>
-    )
-}
+                    <input
+                        type="password"
+                        placeholder="Password"
+                        className="w-full border p-2 rounded"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
 
-export default Login;
+                    <button
+                        type="submit"
+                        className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+                    >
+                        Login
+                    </button>
+
+                    {error && (
+                        <p className="text-red-500 text-center text-sm">
+                            {error}
+                        </p>
+                    )}
+
+                </form>
+
+            </div>
+            </>
+            );
+            };
+
+            export default Login;

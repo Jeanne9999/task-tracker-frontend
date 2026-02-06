@@ -1,20 +1,34 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import type { Task, TaskStatus } from "../types/task";
 
 interface Props {
     onClose: () => void;
     onCreate: (task: Omit<Task, "id">) => void;
+    initialTask?: Task;
 }
 
-const CreateTaskModal: React.FC<Props> = ({ onClose, onCreate }) => {
+const TaskFormModal: React.FC<Props> = ({
+    onClose,
+    onSubmit,
+    initialTask,
+    }) => {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [status, setStatus] = useState<TaskStatus>("TODO");
 
+
+    useEffect(() => {
+        if (initialTask) {
+            setTitle(initialTask.title);
+            setDescription(initialTask.description);
+            setStatus(initialTask.status);
+        }
+    }, [initialTask]);
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
-        onCreate({
+        onSubmit({
             title,
             description,
             status,
@@ -29,7 +43,7 @@ const CreateTaskModal: React.FC<Props> = ({ onClose, onCreate }) => {
             <div className="bg-white rounded-xl p-6 w-full max-w-md">
 
                 <h2 className="text-xl font-bold mb-4">
-                    Create Task
+                    {initialTask ? "Edit Task" : "Create Task"}
                 </h2>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
@@ -74,16 +88,13 @@ const CreateTaskModal: React.FC<Props> = ({ onClose, onCreate }) => {
                             type="submit"
                             className="px-4 py-2 bg-blue-600 text-white rounded"
                         >
-                            Create
+                            {initialTask ? "Save" : "Create"}
                         </button>
-
                     </div>
-
                 </form>
-
             </div>
         </div>
     );
 };
 
-export default CreateTaskModal;
+export default TaskFormModal;

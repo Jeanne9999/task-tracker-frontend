@@ -1,7 +1,7 @@
 import Navbar from "../components/Navbar";
 import TaskCard from "../components/TaskCard";
 import type { Task } from "../types/task";
-import CreateTaskModal from "../components/CreateTaskModal";
+import TaskFormModal from "../components/TaskFormModal";
 import { useState } from "react";
 import api from "../api/axios";
 import { useEffect } from "react";
@@ -30,6 +30,7 @@ const Tasks = () => {
         fetchTasks();
     }, []);
 
+    const [editingTask, setEditingTask] = useState<Task | null>(null);
 
     return (
         <>
@@ -60,7 +61,7 @@ const Tasks = () => {
                         <TaskCard
                             key={task.id}
                             task={task}
-                            onEdit={(t) => console.log("Edit", t)}
+                            onEdit={(t) => setEditingTask(t)}
                             onDelete={(id) => console.log("Delete", id)}
                         />
                     ))}
@@ -68,21 +69,38 @@ const Tasks = () => {
                 </div>
             </div>
 
-            {showModal && (
-                <CreateTaskModal
-                    onClose={() => setShowModal(false)}
-                    onCreate={(newTask) => {
-                        setTasks((prev) => [
-                            ...prev,
-                            {
-                                id: Date.now(),
-                                ...newTask,
-                            },
-                        ]);
+            {(showModal || editingTask!== null) && (
+                <TaskFormModal
+                    onClose={() => {
+                        setShowModal(false);
+                        setEditingTask(null);
+                    }}
+
+                    initialTask={editingTask || undefined}
+
+                    onSubmit={(taskData) => {
+                        if (editingTask!== null) {
+                            // EDIT
+                            setTasks((prev) =>
+                                prev.map((t) =>
+                                    t.id === editingTask.id
+                                        ? { ...t, ...taskData }
+                                        : t
+                                )
+                            );
+                        } else {
+                            // CREATE
+                            setTasks((prev) => [
+                                ...prev,
+                                {
+                                    id: Date.now(),
+                                    ...taskData,
+                                },
+                            ]);
+                        }
                     }}
                 />
             )}
-
         </>
     );
 };

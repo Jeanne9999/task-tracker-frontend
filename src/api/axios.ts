@@ -1,18 +1,24 @@
 import axios from "axios";
 
-const instance = axios.create({
+const api = axios.create({
     baseURL: "http://localhost:8080",
+    headers: {
+        "Content-Type": "application/json",
+    },
 });
 
-instance.interceptors.request.use(
+api.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem("token");
 
-        const isAuthRequest =
+        const isAuth =
             config.url?.includes("/api/auth/authenticate");
 
-        if (token && !isAuthRequest) {
-            config.headers["Authorization"] = `Bearer ${token}`;
+        if (token && !isAuth) {
+            config.headers = {
+                ...config.headers,
+                Authorization: `Bearer ${token}`,
+            };
         }
 
         return config;
@@ -20,4 +26,4 @@ instance.interceptors.request.use(
     (error) => Promise.reject(error)
 );
 
-export default instance;
+export default api;

@@ -5,6 +5,7 @@ import TaskFormModal from "../components/TaskFormModal";
 import { useState } from "react";
 import api from "../api/axios";
 import { useEffect } from "react";
+import ConfirmModal from "../components/ConfirmModal";
 
 
 const Tasks = () => {
@@ -12,6 +13,12 @@ const Tasks = () => {
 
     const [showModal, setShowModal] = useState(false);
     const [tasks, setTasks] = useState<Task[]>([]);
+    const [deletingTask, setDeletingTask] = useState<Task | null>(null);
+    const [editingTask, setEditingTask] = useState<Task | null>(null);
+    // const reloadTasks = async () => {
+    //     const res = await api.get("/api/tasks");
+    //     setTasks(res.data.content);
+    // };
 
 
     useEffect(() => {
@@ -29,8 +36,6 @@ const Tasks = () => {
 
         fetchTasks();
     }, []);
-
-    const [editingTask, setEditingTask] = useState<Task | null>(null);
 
     return (
         <>
@@ -62,14 +67,18 @@ const Tasks = () => {
                             key={task.id}
                             task={task}
                             onEdit={(t) => setEditingTask(t)}
-                            onDelete={(id) => console.log("Delete", id)}
+                            onDelete={(id) => {
+                                const task = tasks.find((t) => t.id ===id);
+                            if (task) setDeletingTask(task);
+                            }}
                         />
                     ))}
 
                 </div>
             </div>
 
-            {(showModal || editingTask!== null) && (
+            {/* Create / Edit Modal */}
+            {(showModal || editingTask !== null) && (
                 <TaskFormModal
                     onClose={() => {
                         setShowModal(false);
@@ -78,29 +87,61 @@ const Tasks = () => {
 
                     initialTask={editingTask || undefined}
 
-                    onSubmit={(taskData) => {
-                        if (editingTask!== null) {
-                            // EDIT
-                            setTasks((prev) =>
-                                prev.map((t) =>
-                                    t.id === editingTask.id
-                                        ? { ...t, ...taskData }
-                                        : t
-                                )
-                            );
-                        } else {
-                            // CREATE
-                            setTasks((prev) => [
-                                ...prev,
-                                {
-                                    id: Date.now(),
-                                    ...taskData,
-                                },
-                            ]);
+                    onSubmit={async (taskData) => {
+                        try {
+                            if (editingTask !== null) {
+                                // UPDATE
+                                const res = await api.put(
+                                    `/api/tasks/${editingTask.id}`,
+                                    taskData
+                                );
+
+                                setTasks((prev) =>
+                                    prev.map((t) =>
+                                        t.id === editingTask.id ? res.data : t
+                                    )
+                                );
+
+                            } else {
+                                // CREATE
+                                const res = await api.post("/api/tasks", taskData);
+
+                                setTasks((prev) => [...prev, res.data]);
+                            }
+
+                        } catch (err) {
+                            console.error("SAVE TASK ERROR", err);
                         }
                     }}
                 />
             )}
+
+            {/* Delete Confirmation */}
+            {deletingTask && (
+                <ConfirmModal
+                    title="Delete Task"
+                    message={`Are you sure you want to delete "${deletingTask.title}"?`}
+
+                    onCancel={() => setDeletingTask(null)}
+
+                    onConfirm={async () => {
+                        try {
+                            await api.delete(`/api/tasks/${deletingTask.id}`);
+
+                            setTasks((prev) =>
+                                prev.filter((t) => t.id !== deletingTask.id)
+                            );
+
+                            setDeletingTask(null);
+
+                        } catch (err) {
+                            console.error("DELETE ERROR", err);
+                        }
+                    }}
+                />
+            )}
+
+
         </>
     );
 };

@@ -3,27 +3,32 @@ import TaskCard from "../components/TaskCard";
 import type { Task } from "../types/task";
 import CreateTaskModal from "../components/CreateTaskModal";
 import { useState } from "react";
+import api from "../api/axios";
+import { useEffect } from "react";
 
 
 const Tasks = () => {
 
-    const demoTasks: Task[] = [
-        {
-            id: 1,
-            title: "Learn Spring Security",
-            description: "Finish JWT authentication",
-            status: "TODO",
-        },
-        {
-            id: 2,
-            title: "React Dashboard",
-            description: "Build task UI",
-            status: "IN_PROGRESS",
-        },
-    ];
 
     const [showModal, setShowModal] = useState(false);
-    const [tasks, setTasks] = useState<Task[]>(demoTasks);
+    const [tasks, setTasks] = useState<Task[]>([]);
+
+
+    useEffect(() => {
+        const fetchTasks = async () => {
+            try {
+                const res = await api.get("/api/tasks");
+
+                console.log("TASKS RESPONSE:", res.data);
+
+                setTasks(res.data.content);
+            } catch (err) {
+                console.error("FETCH TASKS ERROR", err);
+            }
+        };
+
+        fetchTasks();
+    }, []);
 
 
     return (
@@ -50,7 +55,8 @@ const Tasks = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 
-                    {tasks.map((task) => (
+                    {Array.isArray(tasks) &&
+                        tasks.map((task) => (
                         <TaskCard
                             key={task.id}
                             task={task}

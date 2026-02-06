@@ -13,7 +13,7 @@ const Login = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            await login(username, password);
+            await login(username.trim(), password.trim());
             navigate("/tasks");
         } catch {
             setError("Invalid credentials");

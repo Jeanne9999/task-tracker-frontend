@@ -1,6 +1,5 @@
 import Login from "./pages/Login.tsx";
 import Tasks from "./pages/Tasks.tsx";
-import {ReactNode} from "react";
 import {BrowserRouter, Routes, Route, Navigate} from 'react-router';
 import PrivateRoute from "./routes/PrivateRoute";
 
@@ -12,6 +11,7 @@ function App() {
                 <Routes>
                     <Route path="/login" element={<Login />} />
                     <Route element={<PrivateRoute />}>
+                    </Route>
                     <Route path="/tasks" element={<Tasks />} />
                     <Route path="*" element={<Navigate to="/login" />} />
                 </Routes>

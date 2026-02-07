@@ -1,10 +1,9 @@
 import Navbar from "../components/Navbar";
 import TaskCard from "../components/TaskCard";
-import type { Task } from "../types/task";
+import type {Task} from "../types/task";
 import TaskFormModal from "../components/TaskFormModal";
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import api from "../api/axios";
-import { useEffect } from "react";
 import ConfirmModal from "../components/ConfirmModal";
 
 
@@ -15,10 +14,6 @@ const Tasks = () => {
     const [tasks, setTasks] = useState<Task[]>([]);
     const [deletingTask, setDeletingTask] = useState<Task | null>(null);
     const [editingTask, setEditingTask] = useState<Task | null>(null);
-    // const reloadTasks = async () => {
-    //     const res = await api.get("/api/tasks");
-    //     setTasks(res.data.content);
-    // };
 
 
     useEffect(() => {
@@ -39,7 +34,7 @@ const Tasks = () => {
 
     return (
         <>
-            <Navbar />
+            <Navbar/>
 
             <div className="p-6">
 
@@ -63,16 +58,16 @@ const Tasks = () => {
 
                     {Array.isArray(tasks) &&
                         tasks.map((task) => (
-                        <TaskCard
-                            key={task.id}
-                            task={task}
-                            onEdit={(t) => setEditingTask(t)}
-                            onDelete={(id) => {
-                                const task = tasks.find((t) => t.id ===id);
-                            if (task) setDeletingTask(task);
-                            }}
-                        />
-                    ))}
+                            <TaskCard
+                                key={task.id}
+                                task={task}
+                                onEdit={(t) => setEditingTask(t)}
+                                onDelete={(id) => {
+                                    const task = tasks.find((t) => t.id === id);
+                                    if (task) setDeletingTask(task);
+                                }}
+                            />
+                        ))}
 
                 </div>
             </div>

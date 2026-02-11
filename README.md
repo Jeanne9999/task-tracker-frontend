@@ -34,12 +34,12 @@ for managing tasks.
 
 ## Project Structure
 
-src/
-├─ api/ # Axios instance and API services
-├─ components/ # Reusable UI components
-├─ pages/ # Application pages
-├─ routes/ # Protected routing logic
-├─ types/ # Shared TypeScript types
+src/  
+├─ api/ # Axios instance and API services  
+├─ components/ # Reusable UI components  
+├─ pages/ # Application pages  
+├─ routes/ # Protected routing logic  
+├─ types/ # Shared TypeScript types  
 
 ---
 
@@ -148,7 +148,7 @@ Data is synchronized with the backend API.
 ## Author
 
 Joanna Kotronaki   
-Web Developer
+Junior Software Developer
 
 GitHub: https://github.com/Jeanne9999
 
